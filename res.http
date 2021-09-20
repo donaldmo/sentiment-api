@@ -1,0 +1,5 @@
+###
+GET https://www.myfxbook.com/api/login.json?email=domotswiri@gmail.com&password=donald120
+
+### 
+GET https://www.myfxbook.com/api/get-community-outlook.json?session=EsYQHRZ1NCJ4hRUdxgsL2609446
