@@ -77,8 +77,8 @@ const mongoDBStore = new MongoDBStore({
 // }));
 
 // cron job 
-cron.schedule('*/1 * * * *', async () => {
-  console.log('running a task every 1m')
+cron.schedule('*/15 * * * *', async () => {
+  console.log('running a task every 15m')
   let session = ''
 
   // Make an HTTP GET request using axios
@@ -110,8 +110,7 @@ cron.schedule('*/1 * * * *', async () => {
 });
 
 app.get('/', async (req, res, next) => {
-  console.log(req.payload);
-  res.send('Hello from Sentiment');
+  res.send('Saving myfxbook Comunity Outlook to mongodb every 15 minutes');
 });
 
 app.use('/sentiment', SentimentRouter);
