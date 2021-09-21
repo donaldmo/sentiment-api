@@ -77,15 +77,16 @@ const mongoDBStore = new MongoDBStore({
 // }));
 
 // cron job 
-cron.schedule('*/15 * * * *', async () => {
-  console.log('running a task every 15m')
+
+async function startSchedule() {
+  console.log('running a task...')
   let session = ''
 
   // Make an HTTP GET request using axios
   const resp = await axios({
     method: "GET",
     url: `https://www.myfxbook.com/api/login.json?email=domotswiri@gmail.com&password=donald120`,
-  });
+  })
 
   // Retrieve just the data from the response
   const login = resp.data
@@ -94,20 +95,84 @@ cron.schedule('*/15 * * * *', async () => {
 
   let response = await axios({
     method: 'GET',
-    url: `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`
+    url: `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}` 
   })
 
   let { data, general } = response
 
-  const sentiment = new Sentiment({ 
-    symbols: data.symbols,
-    general: data.general 
-  });
+  let array2 = [
+    'EURUSD',
+    'GBPUSD',
+    'USDJPY',
+    'GBPJPY',
+    'USDCAD',
+    'EURAUD',
+    'EURJPY',
+    'AUDCAD',
+    'AUDJPY',
+    'AUDNZD',
+    'AUDUSD',
+    'CADJPY',
+    'EURCAD',
+    'EURCHF',
+    'EURGBP',
+    'EURNZD',
+    'GBPCAD',
+    'GBPCHF',
+    'NZDJPY',
+    'NZDUSD',
+    'USDCHF',
+    'USDZAR',
+    'GBPNZD',
+    'GBPAUD',
+    'CHFJPY',
+    'XAUUSD',
+    'MXNUSD',
+  ]
 
-  const saveSentiment = await sentiment.save()
-  console.log('saveSentiment: ', saveSentiment)
+  let filteredArray1 = data.symbols.filter(el => array2.includes(el.name))
+  console.log(filteredArray1)
 
-});
+  const sentiment = new Sentiment({
+    symbols: filteredArray1,
+    general: data.general
+  })
+
+  console.log('filter: ', filteredArray1)
+
+  // const saveSentiment = await sentiment.save()
+  // console.log('saveSentiment: ', saveSentiment)
+}
+
+// New York opens at 8:00 am to 5:00 pm EST
+cron.schedule('0 8 * * *', async () => {
+  console.log('New York opens at 8:00 am to 5:00 pm EST')
+  startSchedule()
+})
+
+// Tokyo opens at 7:00 pm to 4:00 am EST
+cron.schedule('0 19 * * *', async () => {
+  console.log('Tokyo opens at 7:00 pm to 4:00 am EST')
+  startSchedule()
+})
+
+// Sydney opens at 5:00 pm to 2:00 am EST
+cron.schedule('0 17 * * *', async () => {
+  console.log('Sydney opens at 5:00 pm to 2:00 am EST')
+  startSchedule()
+})
+
+// London opens at 3:00 am to 12:00 noon EST
+cron.schedule('0 3 * * *', async () => {
+  console.log('London opens at 3:00 am to 12:00 noon EST')
+  startSchedule()
+})
+
+// Mid 
+cron.schedule('0 0 * * *', async () => {
+  console.log('Midnight')
+  startSchedule()
+})
 
 app.get('/', async (req, res, next) => {
   res.send('Saving myfxbook Comunity Outlook to mongodb every 15 minutes');
@@ -139,4 +204,6 @@ const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, async () => {
   console.log('server listenting on port: ', PORT)
+
+  startSchedule()
 });
