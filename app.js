@@ -131,17 +131,14 @@ async function startSchedule() {
   ]
 
   let filteredArray1 = data.symbols.filter(el => array2.includes(el.name))
-  console.log(filteredArray1)
 
   const sentiment = new Sentiment({
     symbols: filteredArray1,
     general: data.general
   })
 
-  console.log('filter: ', filteredArray1)
-
-  // const saveSentiment = await sentiment.save()
-  // console.log('saveSentiment: ', saveSentiment)
+  const saveSentiment = await sentiment.save()
+  console.log('saveSentiment: ', saveSentiment)
 }
 
 // New York opens at 8:00 am to 5:00 pm EST
