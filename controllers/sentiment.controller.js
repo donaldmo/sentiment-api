@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const Sentiment = require('../models/sentiment.model');
+const moment = require('moment')
 
 exports.getSentiment = async (req, res, next) => {
   try {
@@ -11,8 +12,9 @@ exports.getSentiment = async (req, res, next) => {
     const limit = parseInt(size);
     const skip = (parseInt(page) - 1) * parseInt(size);
     // console.log('limit: ', limit, 'skip: ', skip);
+console.log(moment())
+    const sentiment = await Sentiment.find({createdAt : { $gte : moment().toISOString()} })
 
-    const sentiment = await Sentiment.findOne()
     //.limit(limit).skip(skip);
     console.log(sentiment);
 

@@ -11,6 +11,7 @@ const https = require('https')
 const cron = require('node-cron')
 const axios = require('axios')
 const Sentiment = require('./models/sentiment.model')
+var http = require("http");
 
 require('dotenv').config();
 
@@ -49,7 +50,8 @@ const connectionParams = {
 }
 
 mongoose.connect(uri, connectionParams).then(() => {
-  console.log('Connected to database on production...ls')
+  console.log('Connected to database')
+  startSchedule()
 })
   .catch((err) => {
     console.error(`Error connecting to the database. \n${err}`);
@@ -95,7 +97,7 @@ async function startSchedule() {
 
   let response = await axios({
     method: 'GET',
-    url: `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}` 
+    url: `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`
   })
 
   let { data, general } = response
@@ -130,16 +132,23 @@ async function startSchedule() {
     'MXNUSD',
   ]
 
-  let filteredArray1 = data.symbols.filter(el => array2.includes(el.name))
+  if (data.symbols !== undefined) {
+    let filteredArray1 = data.symbols.filter(el => array2.includes(el.name))
 
-  const sentiment = new Sentiment({
-    symbols: filteredArray1,
-    general: data.general
-  })
+    const sentiment = new Sentiment({
+      symbols: filteredArray1,
+      general: data.general
+    })
 
-  const saveSentiment = await sentiment.save()
-  console.log('saveSentiment: ', saveSentiment)
+    const saveSentiment = await sentiment.save()
+    console.log('saveSentiment: ', saveSentiment)
+  }
 }
+
+var http = require("http");
+setInterval(function() {
+  http.get("http://vast-anchorage-28102.herokuapp.com");
+}, 300000); // every 5 minutes (300000)
 
 // New York opens at 8:00 am to 5:00 pm EST
 cron.schedule('0 8 * * *', async () => {
@@ -201,6 +210,4 @@ const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, async () => {
   console.log('server listenting on port: ', PORT)
-
-  startSchedule()
 });
