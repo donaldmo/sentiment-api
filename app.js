@@ -51,7 +51,7 @@ const connectionParams = {
 
 mongoose.connect(uri, connectionParams).then(() => {
   console.log('Connected to database')
-  startSchedule()
+  // startSchedule()
 })
   .catch((err) => {
     console.error(`Error connecting to the database. \n${err}`);
